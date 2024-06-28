@@ -1,0 +1,13 @@
+tensorflow 
+tensorflow-macos 
+tensorflow-metal
+jax
+jaxlib
+numpy
+dm-haiku
+matplotlib
+opencv-python
+scikit-learn
+pandas
+flask
+tqdm
