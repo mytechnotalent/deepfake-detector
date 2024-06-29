@@ -298,8 +298,13 @@ class DeepfakeDetectorModel:
         """
         Compiles the model with specified optimizer, loss, and metrics.
         """
-        self.model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0001),
-                           loss=tf.keras.losses.BinaryCrossentropy(), metrics=['accuracy'])
+        # self.model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0001),
+        #                    loss=tf.keras.losses.BinaryCrossentropy(), metrics=['accuracy'])
+        self.model.compile(optimizer=keras.optimizers.Adam(
+            learning_rate=0.0001), 
+            loss=tf.keras.losses.BinaryCrossentropy(), 
+            metrics=['accuracy', tf.keras.metrics.Precision(), tf.keras.metrics.Recall()]
+        )
 
     def train_model(self, train_data, val_data, epochs=100, batch_size=32):
         """
@@ -321,9 +326,8 @@ class DeepfakeDetectorModel:
         keras.callbacks.History
             The training history.
         """
-        early_stopping_cb = keras.callbacks.EarlyStopping(patience=5, restore_best_weights=True)
-        reduce_lr_cb = keras.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=0.001)
-
+        early_stopping_cb = keras.callbacks.EarlyStopping(patience=10, restore_best_weights=True)
+        reduce_lr_cb = keras.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=1e-6)
         return self.model.fit(
             train_data,
             epochs=epochs,
