@@ -161,13 +161,40 @@ class DataProcessor:
         Loads and splits the dataset into training, testing, and validation sets.
 
         Returns:
-        - tuple: Three tuples containing the image datasets for training, testing, and validation.
+        --------
+        tuple:
+            Three tuples containing the image datasets for training, testing, and validation.
         """
         data_loader = DataLoader(self.dataset_dir)
         train_data = data_loader.get_image_dataset_from_directory('Train')
         test_data = data_loader.get_image_dataset_from_directory('Test')
         val_data = data_loader.get_image_dataset_from_directory('Validation')
         return train_data, test_data, val_data
+
+    @staticmethod
+    def get_augmented_data(train_data):
+        """
+        Applies data augmentation to the training data.
+
+        Parameters:
+        -----------
+        train_data : tf.data.Dataset
+            The training data.
+
+        Returns:
+        --------
+        tf.data.Dataset
+            The augmented training data.
+        """
+        data_augmentation = tf.keras.Sequential([
+            layers.RandomFlip('horizontal_and_vertical'),
+            layers.RandomRotation(0.2),
+            layers.RandomZoom(0.2),
+            layers.RandomContrast(0.2),
+        ])
+        augmented_data = train_data.map(lambda x, y: (data_augmentation(x, training=True), y), 
+                                        num_parallel_calls=tf.data.experimental.AUTOTUNE)
+        return augmented_data.prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
 
 
 class DatasetManager:
@@ -211,7 +238,9 @@ class DatasetManager:
         Downloads the dataset from the specified URL and extracts it if not already extracted.
 
         Returns:
-        - bool: True if download and extraction were successful, False otherwise.
+        --------
+        bool:
+            True if download and extraction were successful, False otherwise.
         """
         file_path = os.path.join(self.dataset_download_dir, self.dataset_file)
         # check if the dataset is already downloaded and extracted
@@ -233,6 +262,7 @@ class DatasetManager:
         # finally, if there is something wrong with the path or unable to write to disk
         print(f'dataset file {file_path} not found after download')
         return False
+
 
 class DeepfakeDetectorModel:
     """
@@ -284,7 +314,7 @@ class DeepfakeDetectorModel:
         self.model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0001),
                            loss=tf.keras.losses.BinaryCrossentropy(), metrics=['accuracy'])
 
-    def train_model(self, train_data, val_data, epochs=100, batch_size=65536):
+    def train_model(self, train_data, val_data, epochs=100, batch_size=32):
         """
         Trains the model with the given data.
 
@@ -297,15 +327,15 @@ class DeepfakeDetectorModel:
         epochs : int, optional
             Number of epochs to train the model (default is 100).
         batch_size : int, optional
-            Batch size for training (default is 65536).
+            Batch size for training (default is 32).
 
         Returns:
         --------
         keras.callbacks.History
             The training history.
         """
-        early_stopping_cb = keras.callbacks.EarlyStopping(patience=10, restore_best_weights=True)
-        reduce_lr_cb = keras.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=5, min_lr=0.001)
+        early_stopping_cb = keras.callbacks.EarlyStopping(patience=5, restore_best_weights=True)
+        reduce_lr_cb = keras.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=0.001)
 
         return self.model.fit(
             train_data,
@@ -351,11 +381,8 @@ class ModelTrainer:
     --------
     train_save_evaluate_model(train_data, val_data, test_data):
         Trains, saves, and evaluates the deepfake detection model.
-
-    Attributes:
-    -----------
-    No attributes defined explicitly in this class.
     """
+
     def train_save_evaluate_model(self, train_data, val_data, test_data):
         """
         Trains, saves, and evaluates the deepfake detection model.
@@ -392,6 +419,10 @@ def main():
         # load and split data
         data_processor = DataProcessor(dataset_dir)
         train_data, test_data, val_data = data_processor.load_split_data()
+        
+        # augment the training data
+        train_data = DataProcessor.get_augmented_data(train_data)
+        
         # train, save, and evaluate model
         model_trainer = ModelTrainer()
         model_trainer.train_save_evaluate_model(train_data, val_data, test_data)
