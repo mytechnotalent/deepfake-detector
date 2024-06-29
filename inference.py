@@ -5,7 +5,7 @@ import numpy as np
 import os
 
 
-def allowed_file(filename: str) -> bool:
+def allowed_file(filename):
     """
     Check if a file has an allowed extension.
 
@@ -23,7 +23,7 @@ def allowed_file(filename: str) -> bool:
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def predict_image(file_path: str) -> tuple:
+def predict_image(file_path):
     """
     Predict whether an image is Real or Fake using the loaded model.
 
