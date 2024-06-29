@@ -33,7 +33,7 @@ class DataLoader:
         Base path for the dataset.
     """
 
-    def __init__(self, path: str):
+    def __init__(self, path):
         """
         Initializes DataLoader with the given path.
 
@@ -45,7 +45,7 @@ class DataLoader:
         self.path = path
 
     @staticmethod
-    def download_dataset(url: str, download_dir: str, file_name: str):
+    def download_dataset(url, download_dir, file_name):
         """
         Downloads a dataset from the specified URL.
 
@@ -88,7 +88,7 @@ class DataLoader:
             return False
 
     @staticmethod
-    def unzip_dataset(zip_path: str, extract_to: str):
+    def unzip_dataset(zip_path, extract_to):
         """
         Unzips the dataset.
 
@@ -102,7 +102,7 @@ class DataLoader:
         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
             zip_ref.extractall(extract_to)
 
-    def get_image_dataset_from_directory(self, dir_name: str):
+    def get_image_dataset_from_directory(self, dir_name):
         """
         Loads images from the specified directory.
 
@@ -363,7 +363,7 @@ class DeepfakeDetectorModel:
         """
         return self.model.evaluate(test_data)
 
-    def save_model(self, file_path: str):
+    def save_model(self, file_path):
         """
         Saves the model to the specified file path.
 
@@ -445,7 +445,7 @@ import numpy as np
 import os
 
 
-def allowed_file(filename: str) -> bool:
+def allowed_file(filename):
     """
     Check if a file has an allowed extension.
 
@@ -463,7 +463,7 @@ def allowed_file(filename: str) -> bool:
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def predict_image(file_path: str) -> tuple:
+def predict_image(file_path):
     """
     Predict whether an image is Real or Fake using the loaded model.
 
