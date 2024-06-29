@@ -521,10 +521,11 @@ pip install -r requirements.txt
 
 ## Step 1c: Setup (Windows)
 ```bash
-Invoke-WebRequest -Uri [http://example.com/file.txt](https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe) -OutFile "python-3.11.9-amd64.exe"
+Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe" -OutFile "python-3.11.9-amd64.exe"
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 python-3.11.9-amd64.exe
-python3.11 -m venv venv
-venv\Scripts\Activate.ps1
+python -m venv venv
+.\venv\Scripts\Activate
 pip install -r requirements.txt
 ```
 
