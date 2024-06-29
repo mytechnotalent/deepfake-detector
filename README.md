@@ -311,8 +311,6 @@ class DeepfakeDetectorModel:
         """
         Compiles the model with specified optimizer, loss, and metrics.
         """
-        # self.model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0001),
-        #                    loss=tf.keras.losses.BinaryCrossentropy(), metrics=['accuracy'])
         self.model.compile(optimizer=keras.optimizers.Adam(
             learning_rate=0.0001), 
             loss=tf.keras.losses.BinaryCrossentropy(), 
