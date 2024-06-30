@@ -403,7 +403,7 @@ if __name__ == '__main__':
     deep_fake_detector_model.compile_model(learning_rate)
 
     # train the model with the training data and validation data for a specified number of epochs
-    epochs = 50  # Adjust the number of epochs as needed
+    epochs = 50 
     history = deep_fake_detector_model.train_model(augmented_train_data, val_data, epochs)
 
     # evaluate the model with the test data
