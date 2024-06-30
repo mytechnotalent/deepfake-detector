@@ -16,8 +16,6 @@ import zipfile
 import urllib3
 import requests
 from tqdm import tqdm
-import matplotlib.pyplot as plt
-import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers, models  # type: ignore
@@ -280,7 +278,7 @@ class DeepfakeDetectorModel:
         """
         self.model = self._build_model()
 
-    def _build_model(self) -> keras.Sequential:
+    def _build_model(self):
         """
         Builds the deepfake detection model.
 
@@ -300,26 +298,36 @@ class DeepfakeDetectorModel:
         model.add(layers.Conv2D(256, (3, 3), activation='relu', padding='same'))
         model.add(layers.Conv2D(256, (3, 3), activation='relu', padding='same'))
         model.add(layers.MaxPooling2D((2, 2), strides=(2, 2)))
+        model.add(layers.Conv2D(512, (3, 3), activation='relu', padding='same'))
+        model.add(layers.Conv2D(512, (3, 3), activation='relu', padding='same'))
+        model.add(layers.MaxPooling2D((2, 2), strides=(2, 2)))
+        model.add(layers.Conv2D(512, (3, 3), activation='relu', padding='same'))
+        model.add(layers.Conv2D(512, (3, 3), activation='relu', padding='same'))
+        model.add(layers.MaxPooling2D((2, 2), strides=(2, 2)))
         model.add(layers.Flatten())
-        model.add(layers.Dropout(0.5))
-        model.add(layers.Dense(256, activation='relu'))
-        model.add(layers.Dense(512, activation='relu'))
+        model.add(layers.Dense(4096, activation='relu'))
+        model.add(layers.Dense(4096, activation='relu'))
         model.add(layers.Dense(1, activation='sigmoid'))
         return model
 
-    def compile_model(self):
+    def compile_model(self, learning_rate):
         """
-        Compiles the model with specified optimizer, loss, and metrics.
+        Compiles the model with the specified learning rate.
+
+        Parameters:
+        -----------
+        learning_rate : float
+            The learning rate to use for training.
         """
-        self.model.compile(optimizer=keras.optimizers.Adam(
-            learning_rate=0.0001), 
-            loss=tf.keras.losses.BinaryCrossentropy(), 
-            metrics=['accuracy', tf.keras.metrics.Precision(), tf.keras.metrics.Recall()]
+        self.model.compile(
+            optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
+            loss='binary_crossentropy',
+            metrics=['accuracy']
         )
 
-    def train_model(self, train_data, val_data, epochs=100, batch_size=32):
+    def train_model(self, train_data, val_data, epochs):
         """
-        Trains the model with the given data.
+        Trains the model with the specified data and epochs.
 
         Parameters:
         -----------
@@ -327,29 +335,23 @@ class DeepfakeDetectorModel:
             The training data.
         val_data : tf.data.Dataset
             The validation data.
-        epochs : int, optional
-            Number of epochs to train the model (default is 100).
-        batch_size : int, optional
-            Batch size for training (default is 32).
+        epochs : int
+            The number of epochs to train for.
 
         Returns:
         --------
         keras.callbacks.History
             The training history.
         """
-        early_stopping_cb = keras.callbacks.EarlyStopping(patience=10, restore_best_weights=True)
-        reduce_lr_cb = keras.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=1e-6)
         return self.model.fit(
             train_data,
-            epochs=epochs,
-            batch_size=batch_size,
             validation_data=val_data,
-            callbacks=[early_stopping_cb, reduce_lr_cb]
+            epochs=epochs
         )
 
     def evaluate_model(self, test_data):
         """
-        Evaluates the model with the given test data.
+        Evaluates the model with the test data.
 
         Parameters:
         -----------
@@ -358,82 +360,59 @@ class DeepfakeDetectorModel:
 
         Returns:
         --------
-        list
-            Evaluation metrics.
+        tuple:
+            The loss and accuracy of the model on the test data.
         """
         return self.model.evaluate(test_data)
 
-    def save_model(self, file_path):
+    def save_model(self, path):
         """
-        Saves the model to the specified file path.
+        Saves the trained model to the specified path.
 
         Parameters:
         -----------
-        file_path : str
-            The path to save the model.
+        path : str
+            The path to save the model to.
         """
-        self.model.save(file_path)
-
-
-class ModelTrainer:
-    """
-    A class to train, save, and evaluate a deepfake detection model.
-
-    Methods:
-    --------
-    train_save_evaluate_model(train_data, val_data, test_data):
-        Trains, saves, and evaluates the deepfake detection model.
-    """
-
-    def train_save_evaluate_model(self, train_data, val_data, test_data):
-        """
-        Trains, saves, and evaluates the deepfake detection model.
-
-        Args:
-        - train_data (tf.data.Dataset): Training dataset.
-        - val_data (tf.data.Dataset): Validation dataset.
-        - test_data (tf.data.Dataset): Test dataset.
-        """
-        detector = DeepfakeDetectorModel()
-        detector.compile_model()
-        history = detector.train_model(train_data, val_data)
-        detector.save_model('deepfake_detector_model.keras')
-        detector.evaluate_model(test_data)
-        # plot training history
-        pd.DataFrame(history.history).plot(figsize=(8, 5))
-        plt.grid(True)
-        plt.show()
-
-
-def main():
-    # configuration
-    dataset_url = 'https://www.kaggle.com/api/v1/datasets/download/manjilkarki/deepfake-and-real-images?datasetVersionNumber=1'
-    dataset_download_dir = 'data'
-    dataset_dir = 'data/Dataset'
-    dataset_file = 'archive.zip'
-    
-    # check if TensorFlow can access the GPU
-    print('num GPUs available:', len(tf.config.list_physical_devices('GPU')))
-
-    # download, extract dataset, train, evaluate and save model
-    dataset_manager = DatasetManager(dataset_url, dataset_download_dir, dataset_file)
-    if dataset_manager.download_and_extract_dataset():
-        # load and split data
-        data_processor = DataProcessor(dataset_dir)
-        train_data, test_data, val_data = data_processor.load_split_data()
-        
-        # augment the training data
-        train_data = DataProcessor.get_augmented_data(train_data)
-        
-        # train, save, and evaluate model
-        model_trainer = ModelTrainer()
-        model_trainer.train_save_evaluate_model(train_data, val_data, test_data)
-    else:
-        print('dataset download and extraction failed')
+        self.model.save(path)
 
 
 if __name__ == '__main__':
-    main()
+    # define  dataset URL and file names
+    dataset_url = 'https://www.kaggle.com/api/v1/datasets/download/manjilkarki/deepfake-and-real-images?datasetVersionNumber=1'
+    dataset_download_dir = './data'
+    dataset_file = 'archive.zip'
+
+    # create a DatasetManager instance and download/extract the dataset
+    dataset_manager = DatasetManager(dataset_url, dataset_download_dir, dataset_file)
+    dataset_manager.download_and_extract_dataset()
+
+    # load and process the dataset
+    dataset_dir = './data/Dataset'
+    data_processor = DataProcessor(dataset_dir)
+    train_data, test_data, val_data = data_processor.load_split_data()
+
+    # apply data augmentation to the training data
+    augmented_train_data = DataProcessor.get_augmented_data(train_data)
+
+    # initialize and build the deepfake detection model
+    deep_fake_detector_model = DeepfakeDetectorModel()
+
+    # compile the model with a specified learning rate
+    learning_rate = 0.0001
+    deep_fake_detector_model.compile_model(learning_rate)
+
+    # train the model with the training data and validation data for a specified number of epochs
+    epochs = 50  # Adjust the number of epochs as needed
+    history = deep_fake_detector_model.train_model(augmented_train_data, val_data, epochs)
+
+    # evaluate the model with the test data
+    loss, accuracy = deep_fake_detector_model.evaluate_model(test_data)
+    print(f'model test accuracy: {accuracy * 100:.2f}%')
+
+    # save the trained model
+    model_save_path = 'deepfake_detector_model'
+    deep_fake_detector_model.save_model(model_save_path)
 ```
 
 ## Inference
