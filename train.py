@@ -4,20 +4,38 @@ import urllib3
 import requests
 from tqdm import tqdm
 import tensorflow as tf
-from tensorflow.keras import layers, models
-from tensorflow.keras.regularizers import l1_l2
-from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
+from tensorflow.keras import layers, models # type: ignore
+from tensorflow.keras.regularizers import l1_l2 # type: ignore
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint # type: ignore
+
 
 class DatasetHandler:
-    """A class to handle dataset downloading, unzipping, loading, processing, and augmentation."""
+    """
+    A class to handle dataset downloading, unzipping, loading, processing, and augmentation.
+    """
 
     def __init__(self, dataset_url, dataset_download_dir, dataset_file, dataset_dir='./data/Dataset'):
+        """
+        Initialize the DatasetHandler with the specified parameters.
+
+        Args:
+            dataset_url (str): URL of the dataset to be downloaded.
+            dataset_download_dir (str): Directory where the dataset will be downloaded.
+            dataset_file (str): Name of the dataset file.
+            dataset_dir (str, optional): Directory where the dataset will be extracted. Defaults to './data/Dataset'.
+        """
         self.dataset_url = dataset_url
         self.dataset_download_dir = dataset_download_dir
         self.dataset_file = dataset_file
         self.dataset_dir = dataset_dir
 
     def download_dataset(self):
+        """
+        Download the dataset from the specified URL.
+
+        Returns:
+            bool: True if the dataset is downloaded successfully or already exists, False otherwise.
+        """
         if not os.path.exists(self.dataset_download_dir):
             os.makedirs(self.dataset_download_dir)
         file_path = os.path.join(self.dataset_download_dir, self.dataset_file)
@@ -35,6 +53,12 @@ class DatasetHandler:
         return True
 
     def unzip_dataset(self):
+        """
+        Unzip the downloaded dataset file.
+
+        Returns:
+            bool: True if the dataset is unzipped successfully or already exists, False otherwise.
+        """
         file_path = os.path.join(self.dataset_download_dir, self.dataset_file)
         extracted_dir = os.path.join(self.dataset_download_dir, 'Dataset')
         if os.path.exists(extracted_dir):
@@ -49,6 +73,15 @@ class DatasetHandler:
         return True
 
     def get_image_dataset_from_directory(self, dir_name):
+        """
+        Load image dataset from the specified directory.
+
+        Args:
+            dir_name (str): Name of the directory to load the dataset from.
+
+        Returns:
+            tf.data.Dataset: TensorFlow dataset object containing the images and labels.
+        """
         dir_path = os.path.join(self.dataset_dir, dir_name)
         return tf.keras.utils.image_dataset_from_directory(
             dir_path,
@@ -60,6 +93,15 @@ class DatasetHandler:
         )
 
     def get_augmented_data(self, train_data):
+        """
+        Apply data augmentation to the training dataset.
+
+        Args:
+            train_data (tf.data.Dataset): The training dataset to augment.
+
+        Returns:
+            tf.data.Dataset: The augmented training dataset.
+        """
         data_augmentation = tf.keras.Sequential([
             layers.RandomFlip('horizontal_and_vertical'),
             layers.RandomRotation(0.2),
@@ -72,6 +114,12 @@ class DatasetHandler:
         return augmented_data.prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
 
     def load_split_data(self):
+        """
+        Load and split the dataset into training, validation, and test datasets.
+
+        Returns:
+            tuple: A tuple containing the training, test, and validation datasets.
+        """
         train_data = self.get_image_dataset_from_directory('Train')
         test_data = self.get_image_dataset_from_directory('Test')
         val_data = self.get_image_dataset_from_directory('Validation')
@@ -79,12 +127,23 @@ class DatasetHandler:
 
 
 class DeepfakeDetectorModel:
-    """A class to create and train a deepfake detection model."""
+    """
+    A class to create and train a deepfake detection model.
+    """
 
     def __init__(self):
+        """
+        Initialize the DeepfakeDetectorModel by building the model.
+        """
         self.model = self._build_model()
 
     def _build_model(self):
+        """
+        Build the deepfake detection model architecture.
+
+        Returns:
+            tf.keras.Model: The constructed deepfake detection model.
+        """
         model = models.Sequential()
         model.add(layers.Input(shape=(256, 256, 3)))
         model.add(layers.Rescaling(1./255, name='rescaling'))
@@ -117,6 +176,12 @@ class DeepfakeDetectorModel:
         return model
 
     def compile_model(self, learning_rate):
+        """
+        Compile the deepfake detection model.
+
+        Args:
+            learning_rate (float): Learning rate for the optimizer.
+        """
         optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
         self.model.compile(
             optimizer=optimizer,
@@ -125,6 +190,17 @@ class DeepfakeDetectorModel:
         )
 
     def train_model(self, train_data, val_data, epochs):
+        """
+        Train the deepfake detection model.
+
+        Args:
+            train_data (tf.data.Dataset): The training dataset.
+            val_data (tf.data.Dataset): The validation dataset.
+            epochs (int): Number of epochs to train the model.
+
+        Returns:
+            tf.keras.callbacks.History: History object containing the training history.
+        """
         early_stopping_callback = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
         reduce_lr_callback = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=5, min_lr=1e-7, verbose=1)
         model_checkpoint_callback = ModelCheckpoint('best_model.keras', monitor='val_loss', save_best_only=True, verbose=1)
@@ -136,19 +212,55 @@ class DeepfakeDetectorModel:
         )
 
     def evaluate_model(self, test_data):
+        """
+        Evaluate the deepfake detection model.
+
+        Args:
+            test_data (tf.data.Dataset            ): The test dataset.
+
+        Returns:
+            list: Evaluation metrics such as loss, accuracy, precision, and recall.
+        """
         return self.model.evaluate(test_data)
 
     def save_model(self, path):
+        """
+        Save the deepfake detection model to the specified path.
+
+        Args:
+            path (str): Path to save the model.
+        """
         self.model.save(path)
 
 
 class TrainModel:
-    """A class to manage training of a deepfake detection model."""
+    """
+    A class to manage training of a deepfake detection model.
+    """
 
-    def __init__(self, dataset_url, dataset_download_dir, dataset_file, dataset_dir='./data/Dataset'):
+    def __init__(self, dataset_url, dataset_download_dir, dataset_file, dataset_dir):
+        """
+        Initialize the TrainModel class with the specified parameters.
+
+        Args:
+            dataset_url (str): URL of the dataset to be downloaded.
+            dataset_download_dir (str): Directory where the dataset will be downloaded.
+            dataset_file (str): Name of the dataset file.
+            dataset_dir (str, optional): Directory where the dataset will be extracted..
+        """
         self.dataset_handler = DatasetHandler(dataset_url, dataset_download_dir, dataset_file, dataset_dir)
 
     def run_training(self, learning_rate=0.0001, epochs=50):
+        """
+        Run the training process for the deepfake detection model.
+
+        Args:
+            learning_rate (float, optional): Learning rate for the optimizer. Defaults to 0.0001.
+            epochs (int, optional): Number of epochs to train the model. Defaults to 50.
+
+        Returns:
+            tuple: A tuple containing the training history and evaluation metrics.
+        """
         if not self.dataset_handler.download_dataset():
             print('Failed to download dataset.')
             return
@@ -166,11 +278,16 @@ class TrainModel:
 
 
 def main():
+    """
+    Main function to execute the training process for the deepfake detection model.
+    """
     dataset_url = 'https://www.kaggle.com/api/v1/datasets/download/manjilkarki/deepfake-and-real-images?datasetVersionNumber=1'
     dataset_download_dir = './data'
     dataset_file = 'dataset.zip'
-    train_model_instance = TrainModel(dataset_url, dataset_download_dir, dataset_file)
-    history, evaluation_metrics = train_model_instance.run_training(learning_rate=0.0001, epochs=50)
+    dataset_dir = './data/Dataset'
+ 
+    train_model_instance = TrainModel(dataset_url, dataset_download_dir, dataset_file, dataset_dir)
+    evaluation_metrics = train_model_instance.run_training(learning_rate=0.0001, epochs=50)
     print('Training complete. Evaluation metrics:', evaluation_metrics)
 
 
