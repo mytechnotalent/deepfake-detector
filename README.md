@@ -185,6 +185,7 @@ class DeepfakeDetectorModel:
         model.add(layers.Dense(256, activation='relu', kernel_regularizer=l1_l2(l1=0.0001, l2=0.0001)))
         model.add(layers.Dropout(0.5))
         model.add(layers.Dense(128, activation='relu', kernel_regularizer=l1_l2(l1=0.0001, l2=0.0001)))
+        # output layer
         model.add(layers.Dense(1, activation='sigmoid'))
         return model
 
