@@ -37,7 +37,7 @@ def predict_image(file_path):
     tuple
         A tuple containing the prediction and the prediction percentage.
     """
-    img = image.load_img(file_path, target_size=(128, 128))
+    img = image.load_img(file_path, target_size=(256, 256))
     img_array = image.img_to_array(img)
     img_array = np.expand_dims(img_array, axis=0)
     result = model.predict(img_array)
