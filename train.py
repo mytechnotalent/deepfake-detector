@@ -127,26 +127,10 @@ class DeepfakeDetectorModel:
         Returns:
             tf.keras.Model: Built model.
         """
-#         model = models.Sequential()
-#         model.add(layers.Input(shape=(256, 256, 3)))
-#         model.add(layers.Rescaling(1./255, name='rescaling'))
-#         model.add(layers.Conv2D(16, (4, 4), strides=2, activation='relu'))
-#         model.add(layers.BatchNormalization())
-#         model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2))
-#         model.add(layers.Conv2D(36, (2, 2), strides=1, activation='relu'))
-#         model.add(layers.BatchNormalization())
-#         model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=1))
-#         model.add(layers.Flatten())
-#         model.add(layers.Dense(128, activation='relu'))
-#         model.add(layers.Dense(64, activation='relu'))
-#         model.add(layers.Dense(32, activation='relu'))
-#         model.add(layers.Dense(1, activation='sigmoid'))
-#         return model
-#         evaluation metrics: [0.5308578014373779, 0.7777166366577148, 0.7802362442016602, 0.7687049508094788]
         model = models.Sequential()
         model.add(layers.Input(shape=(256, 256, 3)))
         model.add(layers.Rescaling(1./255, name='rescaling'))
-        model.add(layers.Conv2D(32, (4, 4), strides=2, activation='relu'))
+        model.add(layers.Conv2D(32, (3, 3), strides=2, activation='relu'))
         model.add(layers.BatchNormalization())
         model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2))
         model.add(layers.Conv2D(64, (3, 3), strides=1, activation='relu'))
