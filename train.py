@@ -5,6 +5,7 @@ import requests
 from tqdm import tqdm
 import tensorflow as tf
 from tensorflow.keras import layers, models  # type: ignore
+from tensorflow.keras.layers import LeakyReLU  # type: ignore
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint  # type: ignore
 
 
@@ -92,8 +93,8 @@ class DatasetHandler:
             labels='inferred',
             color_mode='rgb',
             seed=42,
-            batch_size=32,
-            image_size=(256, 256)
+            batch_size=64,
+            image_size=(128, 128)
         )
 
     def load_split_data(self):
@@ -128,20 +129,17 @@ class DeepfakeDetectorModel:
             tf.keras.Model: Built model.
         """
         model = models.Sequential()
-        model.add(layers.Input(shape=(256, 256, 3)))
-        model.add(layers.Rescaling(1./255, name='rescaling'))
-        model.add(layers.Conv2D(32, (3, 3), strides=2, activation='relu'))
+        model.add(layers.Input(shape=(128, 128, 3)))
+        model.add(layers.Rescaling(1./127, name='rescaling'))
+        model.add(layers.Conv2D(32, (3, 3), strides=1, padding='same', activation='relu'))
         model.add(layers.BatchNormalization())
         model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2))
-        model.add(layers.Conv2D(64, (3, 3), strides=1, activation='relu'))
+        model.add(layers.Conv2D(64, (3, 3), strides=1, padding='same', activation='relu'))
         model.add(layers.BatchNormalization())
-        model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=1))
-        model.add(layers.Conv2D(128, (3, 3), strides=1, activation='relu'))
+        model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2))
+        model.add(layers.Conv2D(128, (3, 3), strides=1, padding='same', activation='relu'))
         model.add(layers.BatchNormalization())
-        model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=1))
-        model.add(layers.Conv2D(256, (3, 3), strides=1, activation='relu'))
-        model.add(layers.BatchNormalization())
-        model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=1))
+        model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2))
         model.add(layers.Flatten())
         model.add(layers.Dense(256, activation='relu'))
         model.add(layers.Dropout(0.5))
@@ -149,6 +147,7 @@ class DeepfakeDetectorModel:
         model.add(layers.Dropout(0.5))
         model.add(layers.Dense(64, activation='relu'))
         model.add(layers.Dropout(0.5))
+        model.add(layers.Dense(32, activation='relu'))
         model.add(layers.Dense(1, activation='sigmoid'))
         return model
 
@@ -282,3 +281,4 @@ if __name__ == '__main__':
 
     # metrics
     print('evaluation metrics:', evaluation_metrics)
+    
