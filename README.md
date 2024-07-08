@@ -532,7 +532,7 @@ evaluation metrics: [0.40905073285102844, 0.8599724769592285, 0.8156270384788513
     return model
 
 model 17
-TBD 07-08-24
+evaluation metrics: [0.6935057640075684, 0.5037139058113098, 1.0, 0.00018474043463356793]
     model = models.Sequential()
     model.add(layers.Input(shape=(128, 128, 3)))
     model.add(layers.Rescaling(1./127, name='rescaling'))
@@ -554,6 +554,32 @@ TBD 07-08-24
     model.add(layers.Dense(256, activation='relu'))
     model.add(layers.Dropout(0.9)) 
     model.add(layers.Dense(128, activation='relu'))
+    model.add(layers.Dense(1, activation='sigmoid'))
+    return model
+
+model 18
+TBD 07-08-24
+    model = models.Sequential()
+    model.add(layers.Input(shape=(128, 128, 3)))
+    model.add(layers.Rescaling(1./127, name='rescaling'))
+    model.add(layers.Conv2D(32, (3, 3), strides=1, padding='same', activation='relu'))
+    model.add(layers.BatchNormalization())
+    model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2))
+    model.add(layers.Conv2D(64, (3, 3), strides=1, padding='same', activation='relu'))
+    model.add(layers.BatchNormalization())
+    model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2))
+    model.add(layers.Conv2D(128, (3, 3), strides=1, padding='same', activation='relu'))
+    model.add(layers.BatchNormalization())
+    model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2))
+    model.add(layers.Conv2D(256, (3, 3), strides=1, padding='same', activation='relu'))
+    model.add(layers.BatchNormalization())
+    model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2))
+    model.add(layers.Flatten())
+    model.add(layers.Dense(256, activation='relu'))
+    model.add(layers.Dropout(0.5))
+    model.add(layers.Dense(128, activation='relu'))
+    model.add(layers.Dropout(0.5)) 
+    model.add(layers.Dense(64, activation='relu'))
     model.add(layers.Dense(1, activation='sigmoid'))
     return model
 ```
