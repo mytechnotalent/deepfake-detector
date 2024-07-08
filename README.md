@@ -558,7 +558,7 @@ evaluation metrics: [0.6935057640075684, 0.5037139058113098, 1.0, 0.000184740434
     return model
 
 model 18
-TBD 07-08-24
+evaluation metrics: [0.4234398305416107, 0.876937210559845, 0.9508305788040161, 0.7930907011032104]
     model = models.Sequential()
     model.add(layers.Input(shape=(128, 128, 3)))
     model.add(layers.Rescaling(1./127, name='rescaling'))
@@ -580,6 +580,35 @@ TBD 07-08-24
     model.add(layers.Dense(128, activation='relu'))
     model.add(layers.Dropout(0.5)) 
     model.add(layers.Dense(64, activation='relu'))
+    model.add(layers.Dense(1, activation='sigmoid'))
+    return model
+
+model 19
+TBD 07-08-24
+    model = models.Sequential()
+    model.add(layers.Input(shape=(128, 128, 3)))
+    model.add(layers.Rescaling(1./127, name='rescaling'))
+    model.add(layers.Conv2D(32, (3, 3), strides=1, padding='same', activation='relu'))
+    model.add(layers.BatchNormalization())
+    model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2))
+    model.add(layers.Conv2D(64, (3, 3), strides=1, padding='same', activation='relu'))
+    model.add(layers.BatchNormalization())
+    model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2))
+    model.add(layers.Conv2D(128, (3, 3), strides=1, padding='same', activation='relu'))
+    model.add(layers.BatchNormalization())
+    model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=1))
+    model.add(layers.Conv2D(256, (3, 3), strides=1, padding='same', activation='relu'))
+    model.add(layers.BatchNormalization())
+    model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=1))
+    model.add(layers.Conv2D(512, (3, 3), strides=1, padding='same', activation='relu'))
+    model.add(layers.BatchNormalization())
+    model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2))
+    model.add(layers.Flatten())
+    model.add(layers.Dense(512, activation='relu'))
+    model.add(layers.Dropout(0.5))
+    model.add(layers.Dense(256, activation='relu'))
+    model.add(layers.Dropout(0.5)) 
+    model.add(layers.Dense(128, activation='relu'))
     model.add(layers.Dense(1, activation='sigmoid'))
     return model
 ```
