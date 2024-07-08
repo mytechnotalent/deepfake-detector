@@ -21,9 +21,9 @@ Loss measures how well or poorly the model is performing by quantifying the diff
 Loss = -\frac{1}{N} \sum [ y_i \cdot \log(p_i) + (1 - y_i) \cdot \log(1 - p_i) ]
 ```
 where:
-- \( N \) is the number of samples.
-- \( y_i \) is the actual label for the \( i \)-th sample (1 for real, 0 for fake).
-- \( p_i \) is the predicted probability of the \( i \)-th sample being real.
+- $N$ is the number of samples.
+- $y_i$ is the actual label for the $i$-th sample (1 for real, 0 for fake).
+- $p_i$ is the predicted probability of the $i$-th sample being real.
 
 **Importance for Deepfake Detector:**
 - **Model Optimization:** Loss functions guide the optimization algorithm (e.g., gradient descent) in adjusting the model's weights to minimize error during training.
@@ -40,10 +40,10 @@ Accuracy measures the proportion of correctly classified samples out of the tota
 Accuracy = \frac{TP + TN}{TP + TN + FP + FN}
 ```
 where:
-- \( TP \) = True Positives (real images correctly identified as real)
-- \( TN \) = True Negatives (fake images correctly identified as fake)
-- \( FP \) = False Positives (fake images incorrectly identified as real)
-- \( FN \) = False Negatives (real images incorrectly identified as fake)
+- $TP$ = True Positives (real images correctly identified as real)
+- $TN$ = True Negatives (fake images correctly identified as fake)
+- $FP$ = False Positives (fake images incorrectly identified as real)
+- $FN$ = False Negatives (real images incorrectly identified as fake)
 
 **Importance for Deepfake Detector:**
 - **General Performance:** Accuracy provides a straightforward measure of overall performance.
@@ -59,8 +59,8 @@ Precision measures the proportion of correctly identified positive samples out o
 Precision = \frac{TP}{TP + FP}
 ```
 where:
-- \( TP \) = True Positives
-- \( FP \) = False Positives
+- $TP$ = True Positives
+- $FP$ = False Positives
 
 **Importance for Deepfake Detector:**
 - **False Positive Rate:** High precision indicates a low false positive rate, which is crucial in applications where mistakenly identifying a fake image as real can have significant consequences.
@@ -76,8 +76,8 @@ Recall measures the proportion of correctly identified positive samples out of a
 Recall = \frac{TP}{TP + FN}
 ```
 where:
-- \( TP \) = True Positives
-- \( FN \) = False Negatives
+- $TP$ = True Positives
+- $FN$ = False Negatives
 
 **Importance for Deepfake Detector:**
 - **False Negative Rate:** High recall indicates a low false negative rate, which is important in applications where failing to identify a real image as real is critical.
