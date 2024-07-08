@@ -8,9 +8,83 @@
 Deepfake Detector is an AI/ML model designed to detect AI-generated or manipulated images.
 
 ## CURRENTLY UNDER DEVELOPMENT
+
+### Evaluation Metrics for Deepfake Detector
+
+#### 1. Loss
+
+**Definition:**
+Loss measures how well or poorly the model is performing by quantifying the difference between the predicted outputs and the actual labels. It is a key component of the optimization process in training a neural network. In a binary classification task like deepfake detection, common loss functions include Binary Crossentropy.
+
+**Binary Crossentropy Loss Formula:**
+```math
+Loss = -\frac{1}{N} \sum [ y_i \cdot \log(p_i) + (1 - y_i) \cdot \log(1 - p_i) ]
+```
+where:
+- \( N \) is the number of samples.
+- \( y_i \) is the actual label for the \( i \)-th sample (1 for real, 0 for fake).
+- \( p_i \) is the predicted probability of the \( i \)-th sample being real.
+
+**Importance for Deepfake Detector:**
+- **Model Optimization:** Loss functions guide the optimization algorithm (e.g., gradient descent) in adjusting the model's weights to minimize error during training.
+- **Performance Indicator:** A decreasing loss during training generally indicates that the model is improving.
+- **Overfitting/Underfitting Detection:** Monitoring the loss on training and validation sets helps detect overfitting (low training loss, high validation loss) or underfitting (high loss on both sets).
+
+#### 2. Accuracy
+
+**Definition:**
+Accuracy measures the proportion of correctly classified samples out of the total samples. For binary classification, it's the number of true positives and true negatives divided by the total number of samples.
+
+**Accuracy Formula:**
+```math
+Accuracy = \frac{TP + TN}{TP + TN + FP + FN}
+```
+where:
+- \( TP \) = True Positives (real images correctly identified as real)
+- \( TN \) = True Negatives (fake images correctly identified as fake)
+- \( FP \) = False Positives (fake images incorrectly identified as real)
+- \( FN \) = False Negatives (real images incorrectly identified as fake)
+
+**Importance for Deepfake Detector:**
+- **General Performance:** Accuracy provides a straightforward measure of overall performance.
+- **Threshold Sensitivity:** While useful, accuracy alone can be misleading in imbalanced datasets where one class is more prevalent. For deepfake detection, if fake images are rare, a model could have high accuracy by always predicting real.
+
+#### 3. Precision
+
+**Definition:**
+Precision measures the proportion of correctly identified positive samples out of all samples that were identified as positive. In the context of deepfake detection, it is the proportion of correctly identified real images out of all images identified as real.
+
+**Precision Formula:**
+```math
+Precision = \frac{TP}{TP + FP}
+```
+where:
+- \( TP \) = True Positives
+- \( FP \) = False Positives
+
+**Importance for Deepfake Detector:**
+- **False Positive Rate:** High precision indicates a low false positive rate, which is crucial in applications where mistakenly identifying a fake image as real can have significant consequences.
+- **Model Reliability:** Precision is important when the cost of false positives is high.
+
+#### 4. Recall
+
+**Definition:**
+Recall measures the proportion of correctly identified positive samples out of all actual positive samples. In the context of deepfake detection, it is the proportion of correctly identified real images out of all actual real images.
+
+**Recall Formula:**
+```math
+Recall = \frac{TP}{TP + FN}
+```
+where:
+- \( TP \) = True Positives
+- \( FN \) = False Negatives
+
+**Importance for Deepfake Detector:**
+- **False Negative Rate:** High recall indicates a low false negative rate, which is important in applications where failing to identify a real image as real is critical.
+- **Sensitivity:** Recall is crucial when the cost of missing positive samples (real images) is high.
+
 ### Model Results
 ```
-
 model 1
 evaluation metrics: [0.4498537480831146, 0.7909215688705444, 0.7790842652320862, 0.8078699707984924]
     model = models.Sequential()
