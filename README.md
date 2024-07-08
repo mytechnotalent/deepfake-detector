@@ -7,7 +7,7 @@
 # Deepfake Detector
 Deepfake Detector is an AI/ML model designed to detect AI-generated or manipulated images.
 
-## CURRENTLY UNDER DEVELOPMENT
+<br><br>
 
 ### Evaluation Metrics for Deepfake Detector
 
@@ -249,7 +249,7 @@ evaluation metrics: [0.8206597566604614, 0.8511691689491272, 0.8951209187507629,
     return model
 
 model 8
-# evaluation metrics: [0.9416314959526062, 0.8513525724411011, 0.9008456468582153, 0.7871789932250977]
+evaluation metrics: [0.9416314959526062, 0.8513525724411011, 0.9008456468582153, 0.7871789932250977]
     model = models.Sequential()
     model.add(layers.Input(shape=(128, 128, 3)))
     model.add(layers.Rescaling(1./127, name='rescaling'))
@@ -449,7 +449,7 @@ evaluation metrics: [0.6241858005523682, 0.6010087132453918, 0.5552894473075867,
     return model
 
 model 16
-UNDER DEVELOPMENT
+evaluation metrics: [0.40905073285102844, 0.8599724769592285, 0.8156270384788513, 0.9275817275047302]
     model = models.Sequential()
     model.add(layers.Input(shape=(128, 128, 3)))
     model.add(layers.Rescaling(1./127, name='rescaling'))
@@ -472,6 +472,32 @@ UNDER DEVELOPMENT
     model.add(layers.Dropout(0.7)) 
     model.add(layers.Dense(64, activation='relu'))
     model.add(layers.Dropout(0.7)) 
+    model.add(layers.Dense(1, activation='sigmoid'))
+    return model
+
+model 17
+TBD 07-08-24
+    model = models.Sequential()
+    model.add(layers.Input(shape=(128, 128, 3)))
+    model.add(layers.Rescaling(1./127, name='rescaling'))
+    model.add(layers.Conv2D(32, (3, 3), strides=1, padding='same', activation='relu'))
+    model.add(layers.BatchNormalization())
+    model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2))
+    model.add(layers.Conv2D(64, (3, 3), strides=1, padding='same', activation='relu'))
+    model.add(layers.BatchNormalization())
+    model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2))
+    model.add(layers.Conv2D(128, (3, 3), strides=1, padding='same', activation='relu'))
+    model.add(layers.BatchNormalization())
+    model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2))
+    model.add(layers.Conv2D(256, (3, 3), strides=1, padding='same', activation='relu'))
+    model.add(layers.BatchNormalization())
+    model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2))
+    model.add(layers.Flatten())
+    model.add(layers.Dense(512, activation='relu'))
+    model.add(layers.Dropout(0.9))
+    model.add(layers.Dense(256, activation='relu'))
+    model.add(layers.Dropout(0.9)) 
+    model.add(layers.Dense(128, activation='relu'))
     model.add(layers.Dense(1, activation='sigmoid'))
     return model
 ```
