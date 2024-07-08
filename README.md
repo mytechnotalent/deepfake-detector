@@ -9,6 +9,62 @@ Deepfake Detector is an AI/ML model designed to detect AI-generated or manipulat
 
 <br><br>
 
+### Formulas
+
+- **Input Layer**: Defines the shape of the input data, which in this case is an image with dimensions 128x128 pixels and 3 color channels (RGB).
+
+```math
+\text{Input Layer}: \text{output shape} = (128, 128, 3)
+```
+
+- **Rescaling Layer**: Normalizes the pixel values of the input images to a range suitable for neural networks, in this case dividing by 127.
+
+```math
+\text{Rescaling Layer}: \text{output} = \frac{\text{input}}{127}
+```
+
+- **Conv2D Layer**: Applies convolutional filters to extract features from the input image using ReLU activation, maintaining spatial dimensions through padding and adjusting spatial resolution via strides.
+
+```math
+\text{Conv2D Layer}: \text{output} = \text{ReLU}\left(\left(\frac{\text{input} + 2 \times \text{padding} - \text{kernel size}}{\text{strides}}\right) + 1\right)
+```
+
+- **BatchNormalization Layer**: Normalizes the activations of the previous layer, helping to stabilize and speed up training by reducing internal covariate shift.
+
+```math
+\text{BatchNormalization Layer}: \text{output} = \frac{\text{input} - \text{mean}}{\sqrt{\text{variance} + \text{epsilon}}} \times \text{scale} + \text{offset}
+```
+
+- **MaxPooling2D Layer**: Downsamples the input representation by taking the maximum value in a defined spatial neighborhood, reducing spatial dimensions and creating spatial invariance.
+
+```math
+\text{MaxPooling2D Layer}: \text{output size} = \left\lfloor \frac{\text{input size} - \text{pool size}}{\text{strides}} \right\rfloor + 1
+```
+
+- **Flatten Layer**: Flattens the multi-dimensional input into a 1D array, preparing it for fully connected layers like Dense layers.
+
+```math
+\text{Flatten Layer}: \text{output} = \text{input size} \times \text{last dimension size}
+```
+
+- **Dense Layer (n units)**: Fully connected layer with n neurons, applying the ReLU activation function to introduce non-linearity and learn complex representations.
+
+```math
+\text{Dense Layer (n units)}: \text{output} = \text{ReLU}(\text{input})
+```
+
+- **Dropout Layer (n)**: Randomly drops n% of the input units during training to prevent overfitting by promoting the learning of redundant representations.
+
+```math
+\text{Dropout Layer (n)}: \text{output} = \text{input} \times n
+```
+
+- **Dense Layer (1 unit)**: Final output layer with a sigmoid activation function, producing a probability indicating the likelihood that the input image belongs to the class (real or fake).
+
+```math
+\text{Dense Layer (1 unit)}: \text{output} = \text{Sigmoid}(\text{input})
+```
+
 ### Evaluation Metrics for Deepfake Detector
 
 #### 1. Loss
