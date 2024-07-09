@@ -613,6 +613,40 @@ evaluation metrics: [3.465883731842041, 0.8819807171821594, 0.8669512867927551, 
     model.add(layers.Dense(128, activation='relu'))
     model.add(layers.Dense(1, activation='sigmoid'))
     return model
+
+model 20
+TBD
+    model = models.Sequential()
+    model.add(layers.Input(shape=(128, 128, 3)))
+    model.add(layers.Rescaling(1./127, name='rescaling'))
+    model.add(layers.Conv2D(32, (3, 3), strides=1, padding='same'))
+    model.add(layers.BatchNormalization())
+    model.add(LeakyReLU(alpha=0.01))
+    model.add(layers.Conv2D(64, (3, 3), strides=1, padding='same'))
+    model.add(layers.BatchNormalization())
+    model.add(LeakyReLU(alpha=0.01))
+    model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2))
+    model.add(layers.Conv2D(128, (3, 3), strides=1, padding='same'))
+    model.add(layers.BatchNormalization())
+    model.add(LeakyReLU(alpha=0.01))
+    model.add(layers.Conv2D(256, (3, 3), strides=1, padding='same'))
+    model.add(layers.BatchNormalization())
+    model.add(LeakyReLU(alpha=0.01))
+    model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=2))
+    model.add(layers.Flatten())
+    model.add(layers.Dense(512))
+    model.add(layers.BatchNormalization())
+    model.add(LeakyReLU(alpha=0.01))
+    model.add(layers.Dropout(0.5))
+    model.add(layers.Dense(256))
+    model.add(layers.BatchNormalization())
+    model.add(LeakyReLU(alpha=0.01))
+    model.add(layers.Dropout(0.5))
+    model.add(layers.Dense(128))
+    model.add(layers.BatchNormalization())
+    model.add(LeakyReLU(alpha=0.01))
+    model.add(layers.Dense(1, activation='sigmoid'))
+    return model
 ```
 
 ## Train
