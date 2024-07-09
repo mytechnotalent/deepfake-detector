@@ -615,7 +615,7 @@ evaluation metrics: [3.465883731842041, 0.8819807171821594, 0.8669512867927551, 
     return model
 
 model 20
-TBD
+evaluation metrics: [0.36326730251312256, 0.8589637875556946, 0.8817734122276306, 0.8267134428024292]
     model = models.Sequential()
     model.add(layers.Input(shape=(128, 128, 3)))
     model.add(layers.Rescaling(1./127, name='rescaling'))
