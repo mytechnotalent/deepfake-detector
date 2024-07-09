@@ -141,6 +141,8 @@ where:
 
 ### Model Results
 ```
+LATEST UPDATE 07-08-24
+
 model 1
 evaluation metrics: [0.4498537480831146, 0.7909215688705444, 0.7790842652320862, 0.8078699707984924]
     model = models.Sequential()
@@ -584,7 +586,7 @@ evaluation metrics: [0.4234398305416107, 0.876937210559845, 0.9508305788040161, 
     return model
 
 model 19
-TBD 07-08-24
+evaluation metrics: [3.465883731842041, 0.8819807171821594, 0.8669512867927551, 0.9004248976707458]
     model = models.Sequential()
     model.add(layers.Input(shape=(128, 128, 3)))
     model.add(layers.Rescaling(1./127, name='rescaling'))
