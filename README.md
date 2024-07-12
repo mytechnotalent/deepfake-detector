@@ -9,6 +9,50 @@ Deepfake Detector is an AI/ML model designed to detect AI-generated or manipulat
 
 <br><br>
 
+<br><br>
+
+## Overview
+This notebook uses a convolutional neural network (CNN) model to detect deepfake images. The model is built using TensorFlow and Keras, and it aims to classify images as REAL or FAKE.
+
+## Objectives
+- Download and preprocess the dataset.
+- Build and train a deepfake detection model.
+- Evaluate the model's performance.
+- Save the trained model for future use.
+
+## Tools Used
+- numpy
+- pandas
+- scikit-learn
+- matplotlib
+- TensorFlow
+- Keras
+
+## Dataset
+This dataset provides detailed information and images for deepfake detection. It includes:
+- Train images
+- Test images
+- Validation images
+
+## Model
+We will use a convolutional neural network (CNN) for this task. The CNN is suitable for image classification tasks and will help in understanding the relationship between the image pixels and the label (REAL or FAKE).
+
+## Credits
+
+**Dataset Author:**  
+* Trung-Nghia Le
+
+**Model Author:**  
+* Kevin Thomas
+
+**Date:**  
+* 07-12-24  
+
+**Version:**  
+* 1.0
+
+<br><br>
+
 ### Formulas
 
 - **Input Layer**: Defines the shape of the input data, which in this case is an image with dimensions 128x128 pixels and 3 color channels (RGB).
