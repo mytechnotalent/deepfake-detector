@@ -9,8 +9,6 @@ Deepfake Detector is an AI/ML model designed to detect AI-generated or manipulat
 
 <br><br>
 
-<br><br>
-
 ## Overview
 This notebook uses a convolutional neural network (CNN) model to detect deepfake images. The model is built using TensorFlow and Keras, and it aims to classify images as REAL or FAKE.
 
