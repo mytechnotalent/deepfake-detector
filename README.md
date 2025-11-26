@@ -7,18 +7,22 @@
 # Deepfake Detector
 Deepfake Detector is an AI/ML model designed to detect AI-generated or manipulated images.
 
-<br><br>
+<br>
 
-## Overview
+# Overview
 This notebook uses a convolutional neural network (CNN) model to detect deepfake images. The model is built using TensorFlow and Keras, and it aims to classify images as REAL or FAKE.
 
-## Objectives
+<br>
+
+# Objectives
 - Download and preprocess the dataset.
 - Build and train a deepfake detection model.
 - Evaluate the model's performance.
 - Save the trained model for future use.
 
-## Tools Used
+<br>
+
+# Tools Used
 - numpy
 - pandas
 - scikit-learn
@@ -26,94 +30,81 @@ This notebook uses a convolutional neural network (CNN) model to detect deepfake
 - TensorFlow
 - Keras
 
-## Dataset
+<br>
+
+# Dataset
 This dataset provides detailed information and images for deepfake detection. It includes:
 - Train images
 - Test images
 - Validation images
 
-## Model
+<br>
+
+# Model
 We will use a convolutional neural network (CNN) for this task. The CNN is suitable for image classification tasks and will help in understanding the relationship between the image pixels and the label (REAL or FAKE).
 
-## Credits
+<br>
+
+# Credits
 
 **Dataset Author:**  
 * Trung-Nghia Le
-
 **Model Author:**  
 * Kevin Thomas
-
 **Date:**  
 * 07-12-24  
-
 **Version:**  
 * 1.0
 
-<br><br>
+<br>
 
-### Formulas
+# Formulas
 
 - **Input Layer**: Defines the shape of the input data, which in this case is an image with dimensions 128x128 pixels and 3 color channels (RGB).
-
 ```math
 \text{Input Layer}: \text{output shape} = (128, 128, 3)
 ```
-
 - **Rescaling Layer**: Normalizes the pixel values of the input images to a range suitable for neural networks, in this case dividing by 127.
-
 ```math
 \text{Rescaling Layer}: \text{output} = \frac{\text{input}}{127}
 ```
-
 - **Conv2D Layer**: Applies convolutional filters to extract features from the input image using ReLU activation, maintaining spatial dimensions through padding and adjusting spatial resolution via strides.
-
 ```math
 \text{Conv2D Layer}: \text{output} = \text{ReLU}\left(\left(\frac{\text{input} + 2 \times \text{padding} - \text{kernel size}}{\text{strides}}\right) + 1\right)
 ```
-
 - **BatchNormalization Layer**: Normalizes the activations of the previous layer, helping to stabilize and speed up training by reducing internal covariate shift.
 
 ```math
 \text{BatchNormalization Layer}: \text{output} = \frac{\text{input} - \text{mean}}{\sqrt{\text{variance} + \text{epsilon}}} \times \text{scale} + \text{offset}
 ```
-
 - **MaxPooling2D Layer**: Downsamples the input representation by taking the maximum value in a defined spatial neighborhood, reducing spatial dimensions and creating spatial invariance.
-
 ```math
 \text{MaxPooling2D Layer}: \text{output size} = \left\lfloor \frac{\text{input size} - \text{pool size}}{\text{strides}} \right\rfloor + 1
 ```
-
 - **Flatten Layer**: Flattens the multi-dimensional input into a 1D array, preparing it for fully connected layers like Dense layers.
-
 ```math
 \text{Flatten Layer}: \text{output} = \text{input size} \times \text{last dimension size}
 ```
-
 - **Dense Layer (n units)**: Fully connected layer with n neurons, applying the ReLU activation function to introduce non-linearity and learn complex representations.
-
 ```math
 \text{Dense Layer (n units)}: \text{output} = \text{ReLU}(\text{input})
 ```
-
 - **Dropout Layer (n)**: Randomly drops n% of the input units during training to prevent overfitting by promoting the learning of redundant representations.
-
 ```math
 \text{Dropout Layer (n)}: \text{output} = \text{input} \times n
 ```
-
 - **Dense Layer (1 unit)**: Final output layer with a sigmoid activation function, producing a probability indicating the likelihood that the input image belongs to the class (real or fake).
-
 ```math
 \text{Dense Layer (1 unit)}: \text{output} = \text{Sigmoid}(\text{input})
 ```
 
-### Evaluation Metrics for Deepfake Detector
+<br>
 
-#### 1. Loss
+# Evaluation Metrics for Deepfake Detector
 
+## 1. Loss
 **Definition:**
 Loss measures how well or poorly the model is performing by quantifying the difference between the predicted outputs and the actual labels. It is a key component of the optimization process in training a neural network. In a binary classification task like deepfake detection, common loss functions include Binary Crossentropy.
-
 **Binary Crossentropy Loss Formula:**
 ```math
 Loss = -\frac{1}{N} \sum [ y_i \cdot \log(p_i) + (1 - y_i) \cdot \log(1 - p_i) ]
@@ -122,17 +113,14 @@ where:
 - $N$ is the number of samples.
 - $y_i$ is the actual label for the $i$-th sample (1 for real, 0 for fake).
 - $p_i$ is the predicted probability of the $i$-th sample being real.
-
 **Importance for Deepfake Detector:**
 - **Model Optimization:** Loss functions guide the optimization algorithm (e.g., gradient descent) in adjusting the model's weights to minimize error during training.
 - **Performance Indicator:** A decreasing loss during training generally indicates that the model is improving.
 - **Overfitting/Underfitting Detection:** Monitoring the loss on training and validation sets helps detect overfitting (low training loss, high validation loss) or underfitting (high loss on both sets).
 
-#### 2. Accuracy
-
+## 2. Accuracy
 **Definition:**
 Accuracy measures the proportion of correctly classified samples out of the total samples. For binary classification, it's the number of true positives and true negatives divided by the total number of samples.
-
 **Accuracy Formula:**
 ```math
 Accuracy = \frac{TP + TN}{TP + TN + FP + FN}
@@ -142,16 +130,14 @@ where:
 - $TN$ = True Negatives (fake images correctly identified as fake)
 - $FP$ = False Positives (fake images incorrectly identified as real)
 - $FN$ = False Negatives (real images incorrectly identified as fake)
-
 **Importance for Deepfake Detector:**
 - **General Performance:** Accuracy provides a straightforward measure of overall performance.
 - **Threshold Sensitivity:** While useful, accuracy alone can be misleading in imbalanced datasets where one class is more prevalent. For deepfake detection, if fake images are rare, a model could have high accuracy by always predicting real.
 
-#### 3. Precision
+## 3. Precision
 
 **Definition:**
 Precision measures the proportion of correctly identified positive samples out of all samples that were identified as positive. In the context of deepfake detection, it is the proportion of correctly identified real images out of all images identified as real.
-
 **Precision Formula:**
 ```math
 Precision = \frac{TP}{TP + FP}
@@ -159,16 +145,13 @@ Precision = \frac{TP}{TP + FP}
 where:
 - $TP$ = True Positives
 - $FP$ = False Positives
-
 **Importance for Deepfake Detector:**
 - **False Positive Rate:** High precision indicates a low false positive rate, which is crucial in applications where mistakenly identifying a fake image as real can have significant consequences.
 - **Model Reliability:** Precision is important when the cost of false positives is high.
 
-#### 4. Recall
-
+## 4. Recall
 **Definition:**
 Recall measures the proportion of correctly identified positive samples out of all actual positive samples. In the context of deepfake detection, it is the proportion of correctly identified real images out of all actual real images.
-
 **Recall Formula:**
 ```math
 Recall = \frac{TP}{TP + FN}
@@ -176,12 +159,13 @@ Recall = \frac{TP}{TP + FN}
 where:
 - $TP$ = True Positives
 - $FN$ = False Negatives
-
 **Importance for Deepfake Detector:**
 - **False Negative Rate:** High recall indicates a low false negative rate, which is important in applications where failing to identify a real image as real is critical.
 - **Sensitivity:** Recall is crucial when the cost of missing positive samples (real images) is high.
 
-### Model Results
+<br>
+
+# Model Results
 ```
 LATEST UPDATE 07-08-24
 
@@ -691,7 +675,9 @@ evaluation metrics: [0.36326730251312256, 0.8589637875556946, 0.8817734122276306
     return model
 ```
 
-## Train
+<br>
+
+# Train
 ```python
 import os
 import zipfile
@@ -979,7 +965,9 @@ if __name__ == '__main__':
     print('evaluation metrics:', evaluation_metrics)
 ```
 
-## inference
+<br>
+
+# inference
 ```python
 from flask import Flask, request, render_template
 from tensorflow.keras.models import load_model # type: ignore
@@ -1092,7 +1080,9 @@ if __name__ == '__main__':
     inference_model.run()
 ```
 
-## Step 1a: Setup (MAC)
+<br>
+
+# Step 1a: Setup (MAC)
 ```bash
 brew install python@3.11
 python3.11 -m venv venv
@@ -1100,7 +1090,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Step 1b: Setup (Ubuntu)
+# Step 1b: Setup (Ubuntu)
 ```bash
 sudo apt install python3.11
 python3.11 -m venv venv
@@ -1108,7 +1098,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Step 1c: Setup (Windows)
+# Step 1c: Setup (Windows)
 ```bash
 Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe" -OutFile "python-3.11.9-amd64.exe"
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
@@ -1118,20 +1108,24 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
-## Step 2: Train (optional)
+# Step 2: Train (optional)
 ```bash
 python train.py
 ```
 
-## Step 3: Inference
+# Step 3: Inference
 ```
 python inference.py
 ```
 
-## Dataset Reference
+<br>
+
+# Dataset Reference
 Kaggle Dataset [HERE](https://www.kaggle.com/datasets/manjilkarki/deepfake-and-real-images)
 
-## Dataset Citation
+<br>
+
+# Dataset Citation
 ```
 @ Inproceedings{ltnghia-ICCV2021,
   Title          = {OpenForensics: Large-Scale Challenging Dataset For 
@@ -1143,10 +1137,7 @@ and Isao Echizen},
 }
 ```
 
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+<br>
 
-Please make sure to update tests as appropriate.
-
-## License
+# License
 [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)
